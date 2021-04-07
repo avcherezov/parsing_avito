@@ -10,54 +10,50 @@ def get_html(url):
 
 def get_total_pages(html):
     soup = BeautifulSoup(html, 'lxml')
-
-    pages = soup.find('div', class_='pagination-root-2oCjZ').find_all('span', class_='pagination-item-1WyVp')[-2].get('data-marker')
+    pages = soup.find('div', class_='pagination-root-2oCjZ').find_all(
+        'span', class_='pagination-item-1WyVp')[-2].get('data-marker')
     total_pages = pages.split('(')[1].split(')')[0]
-
     return int(total_pages)
 
 
 def write_csv(data):
     with open('avito.csv', 'a') as f:
         writer = csv.writer(f)
-
         writer.writerow( (data['title'],
                           data['price'],
                           data['metro'],
-                          data['url']) )
+                          data['url']) 
+                        )
 
 
 def get_page_data(html):
     soup = BeautifulSoup(html, 'lxml')
-
-    ads = soup.find('div', class_ ='index-root-2c0gs').find_all('div', class_='item__line')
-
+    ads = soup.find('div', class_ ='index-root-2c0gs').find_all(
+        'div', class_='item__line')
     for ad in ads:
         try:
-            title = ad.find('div', class_='description').find('span').text.strip()
+            title = ad.find('div', class_='description').find(
+                'span').text.strip()
         except:
             title = ''
-
         try:
-            url = 'https://www.avito.ru' + ad.find('div', class_='description').find('h3').find('a').get('href')
+            url = 'https://www.avito.ru' + ad.find(
+                'div', class_='description').find('h3').find('a').get('href')
         except:
             url = ''
-
         try:
             price = ad.find('div', class_='snippet-price-row').text.strip()
         except:
             price = ''
-
         try:
-            metro = ad.find('div', class_='data').find('div', class_='item-address').text.split(',')[0]
+            metro = ad.find('div', class_='data').find(
+                'div', class_='item-address').text.split(',')[0]
         except:
             metro = ''
-
         data = {'title': title,
                 'price': price,
                 'metro': metro,
                 'url': url}
-
         write_csv(data)
 
 
